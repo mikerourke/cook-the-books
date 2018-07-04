@@ -16,8 +16,6 @@
         "SIDE_MODULE=1",
         "-s",
         "BINARYEN_ASYNC_COMPILATION=0",
-        "-s",
-        "ALLOW_MEMORY_GROWTH=1",
         "-o",
         "${workspaceFolder}/src/assets/main.wasm"
       ],
@@ -28,14 +26,6 @@
       "presentation": {
         "panel": "new"
       }
-    },
-    {
-      "label": "Serve",
-      "type": "shell",
-      "command": "http-server",
-      "args": [
-        "${workspaceFolder}"
-      ]
     }
   ]
 }
