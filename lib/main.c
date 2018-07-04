@@ -1,3 +1,9 @@
+/**
+ * Most of this code was taken from the GeeksforGeeks pages covering
+ * Doubly Linked Lists.
+ * @link https://www.geeksforgeeks.org/doubly-linked-list
+ * @link https://www.geeksforgeeks.org/delete-a-node-in-a-doubly-linked-list
+ */
 // ------------------------------------------------------------------- 
 // SECTION 1: DECLARATIONS 
 // ------------------------------------------------------------------- 
@@ -12,17 +18,25 @@ struct Node {
   struct Node *prev;
 };
 
+// We're using this to quickly identify which type of value is
+// being calculated without having to write separate methods
+// or use "magic" numbers.
 typedef enum {
   RAW = 1,
   COOKED = 2
 } AmountType;
 
+// Initialize the linked lists when the module loads. These represents the
+// first or "head" nodes for the transactions and categories lists.
 struct Node *transactionsHead = NULL;
 struct Node *categoriesHead = NULL;
 
 // ------------------------------------------------------------------- 
 // SECTION 2: LINKED LIST OPERATIONS 
 // ------------------------------------------------------------------- 
+/**
+ * Removes a node from the linked list.
+ */
 void deleteNode(struct Node **headNode, struct Node *delNode) {
     // Base case:
     if (*headNode == NULL || delNode == NULL) return;
@@ -40,6 +54,9 @@ void deleteNode(struct Node **headNode, struct Node *delNode) {
     free(delNode);
 }
 
+/**
+ * Adds a node to the end of the linked list.
+ */
 void appendNode(struct Node **headNode, int id, int categoryId,
                 float rawAmount, float cookedAmount) {
     // 1. Allocate node:
@@ -77,6 +94,11 @@ void appendNode(struct Node **headNode, int id, int categoryId,
 // ------------------------------------------------------------------- 
 // SECTION 3: TRANSACTIONS OPERATIONS 
 // ------------------------------------------------------------------- 
+/**
+ * Returns a node from the linked list that corresponds with the specified
+ * ID. Since we have 2 linked lists, one for transactions, and one for
+ * category totals, we can use this method to find either one.
+ */
 struct Node *findNodeById(int id, struct Node *withinNode) {
     struct Node *node = withinNode;
     while (node != NULL) {
@@ -86,11 +108,18 @@ struct Node *findNodeById(int id, struct Node *withinNode) {
     return NULL;
 }
 
+/**
+ * Add a new node (transaction) to the local transactions linked list.
+ */
 void addTransaction(int id, int categoryId, float rawAmount,
                     float cookedAmount) {
     appendNode(&transactionsHead, id, categoryId, rawAmount, cookedAmount);
 }
 
+/**
+ * Update an existing node (transaction) in the local transactions linked
+ * list.
+ */
 void editTransaction(int id, int categoryId, float rawAmount,
                      float cookedAmount) {
     struct Node *foundNode = findNodeById(id, transactionsHead);
@@ -101,6 +130,10 @@ void editTransaction(int id, int categoryId, float rawAmount,
     }
 }
 
+/**
+ * Removes the node from the local transactions linked list that
+ * corresponds with the specified ID.
+ */
 void removeTransaction(int id) {
     struct Node *foundNode = findNodeById(id, transactionsHead);
     if (foundNode != NULL) deleteNode(&transactionsHead, foundNode);
@@ -109,6 +142,10 @@ void removeTransaction(int id) {
 // -------------------------------------------------------------------
 // SECTION 4: TRANSACTIONS CALCULATIONS
 // -------------------------------------------------------------------
+/**
+ * Calculates the totals for raw and cooked amounts by aggregating the
+ * values in all of the transaction records.
+ */
 void calculateGrandTotals(float *totalRaw, float *totalCooked) {
     struct Node *node = transactionsHead;
     while (node != NULL) {
@@ -118,6 +155,10 @@ void calculateGrandTotals(float *totalRaw, float *totalCooked) {
     }
 }
 
+/**
+* Returns the grand total of either the raw or cooked transactions
+* based on the specified type.
+*/
 float getGrandTotalForType(AmountType type) {
     float totalRaw = 0;
     float totalCooked = 0;
@@ -128,6 +169,10 @@ float getGrandTotalForType(AmountType type) {
     return 0;
 }
 
+/**
+ * Returns the final balance (initial balance + transactions total) for
+ * the specified amount type.
+ */
 float getFinalBalanceForType(AmountType type, float initialBalance) {
     float totalForType = getGrandTotalForType(type);
     return initialBalance + totalForType;
@@ -136,6 +181,12 @@ float getFinalBalanceForType(AmountType type, float initialBalance) {
 // -------------------------------------------------------------------
 // SECTION 5: CATEGORIES CALCULATIONS
 // -------------------------------------------------------------------
+/**
+ * Attempts to find an existing node associated with the specified
+ * category ID. If found, increments the raw and cooked amounts by the
+ * values specified as arguments. If not found, appends it as a new
+ * node to the categories linked list.
+ */
 void upsertCategoryNode(int categoryId, float transactionRaw,
                         float transactionCooked) {
     struct Node *foundNode = findNodeById(categoryId, categoriesHead);
@@ -148,6 +199,12 @@ void upsertCategoryNode(int categoryId, float transactionRaw,
     }
 }
 
+/**
+ * Loops through the transactions list and either adds a node representing
+ * the category associated with that transaction to the categories
+ * linked list or increments the raw and cooked amounts in the existing
+ * category record.
+ */
 void buildValuesByCategoryList() {
     struct Node *node = transactionsHead;
     while (node != NULL) {
@@ -157,11 +214,19 @@ void buildValuesByCategoryList() {
     }
 }
 
+/**
+ * Force recalculation for each of the categories for the current
+ * transaction values.
+ */
 void recalculateForCategories() {
     categoriesHead = NULL;
     buildValuesByCategoryList();
 }
 
+/**
+ * Returns the total amount of either raw or cooked transactions
+ * associated with the specified type and category ID.
+ */
 float getTotalForTypeAndCategory(AmountType type, int categoryId) {
     // Ensure the category totals have been calculated:
     if (categoriesHead == NULL) buildValuesByCategoryList();
