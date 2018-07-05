@@ -1,5 +1,4 @@
 import App from './components/App.js';
-import ErrorPage from './components/ErrorPage.js';
 import { store, initializeStore } from './store/store.js';
 
 // This allows us to use the <vue-numeric> component globally:
@@ -17,12 +16,11 @@ function initialRender(component) {
 }
 
 // After fetching the transactions and initializing the Wasm module,
-// render the app. If there's an error, show the error page component:
+// render the app. If there's an error, log to console.
 initializeStore()
   .then(() => {
     initialRender(App);
   })
   .catch(err => {
     console.error(err);
-    initialRender(ErrorPage);
   });
