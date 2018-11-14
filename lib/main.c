@@ -4,9 +4,6 @@
  * @link https://www.geeksforgeeks.org/doubly-linked-list
  * @link https://www.geeksforgeeks.org/delete-a-node-in-a-doubly-linked-list
  */
-// ------------------------------------------------------------------- 
-// SECTION 1: DECLARATIONS 
-// ------------------------------------------------------------------- 
 #include <stdlib.h>
 
 struct Node {
@@ -31,9 +28,6 @@ typedef enum {
 struct Node *transactionsHead = NULL;
 struct Node *categoriesHead = NULL;
 
-// ------------------------------------------------------------------- 
-// SECTION 2: LINKED LIST OPERATIONS 
-// ------------------------------------------------------------------- 
 /**
  * Removes a node from the linked list.
  */
@@ -91,9 +85,6 @@ void appendNode(struct Node **headNode, int id, int categoryId,
     newNode->prev = last;
 }
 
-// ------------------------------------------------------------------- 
-// SECTION 3: TRANSACTIONS OPERATIONS 
-// ------------------------------------------------------------------- 
 /**
  * Returns a node from the linked list that corresponds with the specified
  * ID. Since we have 2 linked lists, one for transactions, and one for
@@ -139,9 +130,6 @@ void removeTransaction(int id) {
     if (foundNode != NULL) deleteNode(&transactionsHead, foundNode);
 }
 
-// -------------------------------------------------------------------
-// SECTION 4: TRANSACTIONS CALCULATIONS
-// -------------------------------------------------------------------
 /**
  * Calculates the totals for raw and cooked amounts by aggregating the
  * values in all of the transaction records.
@@ -178,9 +166,6 @@ float getFinalBalanceForType(AmountType type, float initialBalance) {
     return initialBalance + totalForType;
 }
 
-// -------------------------------------------------------------------
-// SECTION 5: CATEGORIES CALCULATIONS
-// -------------------------------------------------------------------
 /**
  * Attempts to find an existing node associated with the specified
  * category ID. If found, increments the raw and cooked amounts by the
@@ -227,7 +212,7 @@ void recalculateForCategories() {
  * Returns the total amount of either raw or cooked transactions
  * associated with the specified type and category ID.
  */
-float getTotalForTypeAndCategory(AmountType type, int categoryId) {
+float getCategoryTotal(AmountType type, int categoryId) {
     // Ensure the category totals have been calculated:
     if (categoriesHead == NULL) buildValuesByCategoryList();
 
